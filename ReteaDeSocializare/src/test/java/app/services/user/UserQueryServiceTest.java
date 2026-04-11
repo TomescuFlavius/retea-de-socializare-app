@@ -28,12 +28,10 @@ public class UserQueryServiceTest {
     @Mock
     private UserRepository userRepository;
     private UserQueryService userQueryService;
-    private UserMapper userMapper;
 
     @BeforeEach
     void setUp() {
-        userMapper = new UserMapper();
-        userQueryService=new UserQueryServiceImpl(userRepository,userMapper);
+        userQueryService=new UserQueryServiceImpl(userRepository);
     }
 
     @Test
@@ -43,7 +41,7 @@ public class UserQueryServiceTest {
         List<User> userList= List.of(user1,user2);
         when(userRepository.findAll()).thenReturn(userList);
         UserResponseList responseList=userQueryService.findAllUsers();
-        assertEquals(userMapper.toDtoList(userList), responseList.userResponseList());
+        assertEquals(UserMapper.toDtoList(userList), responseList.userResponseList());
     }
     @Test
     void getUserById() throws UserNotFoundException {
@@ -68,7 +66,7 @@ public class UserQueryServiceTest {
         List<User> userList= List.of(user1,user2);
         when(userRepository.findUsersByEmail("email@gmail.com")).thenReturn(userList);
         UserResponseList userResponseList=userQueryService.findUsersByEmail("email@gmail.com");
-        assertEquals(userMapper.toDtoList(userList), userResponseList.userResponseList());
+        assertEquals(UserMapper.toDtoList(userList), userResponseList.userResponseList());
     }
 
     @Test
@@ -78,7 +76,7 @@ public class UserQueryServiceTest {
         List<User> userList= List.of(user1,user2);
         when(userRepository.findUsersByUsername("nume")).thenReturn(userList);
         UserResponseList userResponseList=userQueryService.findUsersByUsername("nume");
-        assertEquals(userMapper.toDtoList(userList), userResponseList.userResponseList());
+        assertEquals(UserMapper.toDtoList(userList), userResponseList.userResponseList());
     }
 
     @Test

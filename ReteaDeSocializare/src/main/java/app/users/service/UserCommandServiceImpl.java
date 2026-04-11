@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
-    private UserMapper userMapper;
     private UserRepository userRepository;
-    public UserCommandServiceImpl(UserMapper userMapper, UserRepository userRepository) {
-        this.userMapper = userMapper;
+    public UserCommandServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -25,8 +23,8 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Transactional
     public UserResponse createUser(UserCreateRequest userCreateRequest) throws UserAlreadyExistException {
         if (userRepository.existsUserByUsername(userCreateRequest.username()))throw new  UserAlreadyExistException();
-        User savedUser= userRepository.save(userMapper.toEntity(userCreateRequest));
-        return userMapper.toDto(savedUser);
+        User savedUser= userRepository.save(UserMapper.toEntity(userCreateRequest));
+        return UserMapper.toDto(savedUser);
     }
 
     @Override

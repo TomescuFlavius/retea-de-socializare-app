@@ -3,12 +3,11 @@ package app.users.mapper;
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserResponse;
 import app.users.model.User;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
-@Component
+
 public class UserMapper {
-    public User toEntity(UserCreateRequest userCreateRequest) {
+    public static User toEntity(UserCreateRequest userCreateRequest) {
         if (userCreateRequest==null) {
             return null;
         }
@@ -20,14 +19,14 @@ public class UserMapper {
                 .build();
     }
 
-    public UserResponse toDto(User user) {
+    public static UserResponse toDto(User user) {
         if (user==null) {return null;}
         return new UserResponse(user.getId(), user.getUsername(), user.getPassword(), user.getEmail(), user.getCreatedAt());
     }
 
-    public List<UserResponse> toDtoList(List<User> users) {
+    public static List<UserResponse> toDtoList(List<User> users) {
         return users.stream()
-                .map(this::toDto)
+                .map(UserMapper::toDto)
                 .toList();
     }
 }
