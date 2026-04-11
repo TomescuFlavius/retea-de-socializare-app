@@ -39,8 +39,9 @@ public class UserQueryServiceImpl implements UserQueryService {
         return new UserResponseList(UserMapper.toDtoList(userRepository.findUsersByEmail(email))) ;    }
 
     @Override
-    public UserResponse findUserByEmail(String email) throws UserAlreadyExistException {
-        if (userRepository.findUserByEmail(email).isPresent()) throw new UserAlreadyExistException();
+    public UserResponse findUserByEmail(String email) throws UserNotFoundException {
+        if (userRepository.findUserByEmail(email).isEmpty()) throw new UserNotFoundException();
         return UserMapper.toDto(userRepository.findUserByEmail(email).get());
     }
+
 }

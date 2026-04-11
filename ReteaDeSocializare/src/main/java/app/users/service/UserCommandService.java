@@ -8,6 +8,6 @@ import app.users.exceptions.UserNotFoundException;
 
 public interface UserCommandService {
     UserResponse createUser(UserCreateRequest userCreateRequest) throws UserAlreadyExistException;
-    UserResponse updateUser(long id, UserUpdateRequest userUpdateRequest) throws UserNotFoundException;
-    UserResponse deleteUser(String username) throws UserNotFoundException;
+    UserResponse updateUser(String email, UserUpdateRequest userUpdateRequest) throws UserNotFoundException;
+    UserResponse deleteUser(String email) throws UserNotFoundException;
 }

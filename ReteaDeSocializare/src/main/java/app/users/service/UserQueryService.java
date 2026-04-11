@@ -10,5 +10,5 @@ public interface UserQueryService {
     UserResponse findUserById(long id) throws UserNotFoundException;
     UserResponseList findUsersByUsername(String username)throws UserNotFoundException;
     UserResponseList findUsersByEmail(String email)throws UserNotFoundException;
-    UserResponse findUserByEmail(String email) throws UserAlreadyExistException;
+    UserResponse findUserByEmail(String email) throws UserNotFoundException;
 }

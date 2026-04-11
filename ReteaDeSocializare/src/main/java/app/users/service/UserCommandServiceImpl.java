@@ -28,13 +28,26 @@ public class UserCommandServiceImpl implements UserCommandService {
     }
 
     @Override
-    public UserResponse updateUser(long id, UserUpdateRequest userUpdateRequest) throws UserNotFoundException {
-        return null;
+    @Transactional
+    public UserResponse updateUser(String email, UserUpdateRequest userUpdateRequest) throws UserNotFoundException {
+        if (userRepository.findUserByEmail(email).isEmpty())throw new  UserNotFoundException();
+        User user=userRepository.findUserByEmail(email).get();
+        if (userUpdateRequest.email()!=null && !userUpdateRequest.email().isBlank())
+            user.setEmail(userUpdateRequest.email());
+        if (userUpdateRequest.password()!=null && !userUpdateRequest.password().isBlank())
+            user.setPassword(userUpdateRequest.password());
+        if (userUpdateRequest.username()!=null && !userUpdateRequest.username().isBlank())
+            user.setUsername(userUpdateRequest.username());
+        User savedUser=userRepository.save(user);
+        return UserMapper.toDto(savedUser);
     }
 
     @Override
-    public UserResponse deleteUser(String username) throws UserNotFoundException {
-        return null;
+    public UserResponse deleteUser(String email) throws UserNotFoundException {
+        if (userRepository.findUserByEmail(email).isEmpty())throw new  UserNotFoundException();
+        User savedUser=userRepository.findUserByEmail(email).get();
+        userRepository.delete(savedUser);
+        return UserMapper.toDto(savedUser);
     }
 
 
