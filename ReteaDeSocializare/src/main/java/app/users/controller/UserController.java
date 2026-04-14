@@ -1,5 +1,4 @@
 package app.users.controller;
-
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserResponse;
 import app.users.dtos.UserResponseList;
@@ -14,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-
 @Controller
 @RequestMapping("/api/v1/users")
 @Slf4j
@@ -43,5 +40,10 @@ public class UserController {
         public ResponseEntity<UserResponse> updateUser(@PathVariable String email, @RequestBody UserUpdateRequest userUpdateRequest) throws UserNotFoundException {
         log.info("HTTP PUT /api/v1/users/update/{} username={}, email={}, password={}",email, userUpdateRequest.username(), userUpdateRequest.email(), userUpdateRequest.password());
         return ResponseEntity.ok(userCommandService.updateUser(email, userUpdateRequest));
+    }
+    @DeleteMapping("/delete/{email}")
+    public ResponseEntity<UserResponse> deleteUser(@PathVariable String email) throws UserNotFoundException {
+        log.info("HTTP DELETE /api/v1/users/delete/{}",email);
+        return ResponseEntity.status(HttpStatus.OK).body(userCommandService.deleteUser(email));
     }
 }

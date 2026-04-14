@@ -1,8 +1,6 @@
 package app.users.service;
-
 import app.users.dtos.UserResponse;
 import app.users.dtos.UserResponseList;
-import app.users.exceptions.UserAlreadyExistException;
 import app.users.exceptions.UserNotFoundException;
 import app.users.mapper.UserMapper;
 import app.users.repository.UserRepository;
@@ -36,12 +34,12 @@ public class UserQueryServiceImpl implements UserQueryService {
     @Override
     public UserResponseList findUsersByEmail(String email)  throws UserNotFoundException {
         if (userRepository.findUsersByEmail(email).isEmpty()) throw new UserNotFoundException();
-        return new UserResponseList(UserMapper.toDtoList(userRepository.findUsersByEmail(email))) ;    }
+        return new UserResponseList(UserMapper.toDtoList(userRepository.findUsersByEmail(email))) ;
+    }
 
     @Override
     public UserResponse findUserByEmail(String email) throws UserNotFoundException {
         if (userRepository.findUserByEmail(email).isEmpty()) throw new UserNotFoundException();
         return UserMapper.toDto(userRepository.findUserByEmail(email).get());
     }
-
 }

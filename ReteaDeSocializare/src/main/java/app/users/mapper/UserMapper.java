@@ -1,9 +1,7 @@
 package app.users.mapper;
-
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserResponse;
 import app.users.model.User;
-
 import java.util.List;
 
 public class UserMapper {

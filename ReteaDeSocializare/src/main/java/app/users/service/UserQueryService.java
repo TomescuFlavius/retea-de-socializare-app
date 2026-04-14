@@ -1,8 +1,6 @@
 package app.users.service;
-
 import app.users.dtos.UserResponse;
 import app.users.dtos.UserResponseList;
-import app.users.exceptions.UserAlreadyExistException;
 import app.users.exceptions.UserNotFoundException;
 
 public interface UserQueryService {

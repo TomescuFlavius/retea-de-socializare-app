@@ -1,5 +1,4 @@
 package app.users.service;
-
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserResponse;
 import app.users.dtos.UserUpdateRequest;
@@ -17,7 +16,6 @@ public class UserCommandServiceImpl implements UserCommandService {
     public UserCommandServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
 
     @Override
     @Transactional
@@ -49,6 +47,4 @@ public class UserCommandServiceImpl implements UserCommandService {
         userRepository.delete(savedUser);
         return UserMapper.toDto(savedUser);
     }
-
-
 }

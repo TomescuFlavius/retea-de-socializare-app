@@ -1,33 +1,27 @@
-package app.users.model;
+package app.photos.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
+
 @Builder
 @Entity
-@Table(name= "users")
+@Table(name= "photos")
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
-
+public class Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @NotBlank
-    private String username;
-
-    @NotBlank
-    private String password;
-
-    @Email
-    private String email;
-
+    private String imgUrl;
+    @Id
+    private Long userId;
     @PastOrPresent(message = "Data nu poate fi in viitor")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }
