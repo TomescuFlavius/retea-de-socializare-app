@@ -1,8 +1,10 @@
 package app.photos.exceptions;
 
-import static app.constants.ExceptionConstants.PHOTO_ALREADY_EXIST_EXCEPTION;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class PhotoAlreadyExistException extends Exception {
+import static app.constants.ExceptionConstants.PHOTO_ALREADY_EXIST_EXCEPTION;
+public class PhotoAlreadyExistException extends RuntimeException {
     public PhotoAlreadyExistException() {
         super(PHOTO_ALREADY_EXIST_EXCEPTION);
     }

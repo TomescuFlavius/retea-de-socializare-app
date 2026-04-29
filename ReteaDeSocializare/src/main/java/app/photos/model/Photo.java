@@ -1,5 +1,6 @@
 package app.photos.model;
 
+import app.users.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
@@ -20,8 +21,9 @@ public class Photo {
     private Long id;
     @NotBlank
     private String imgUrl;
-    @Id
-    private Long userId;
     @PastOrPresent(message = "Data nu poate fi in viitor")
     private LocalDateTime createdAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

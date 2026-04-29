@@ -3,10 +3,14 @@ package app.services.photo;
 import app.photos.dtos.PhotoCreateRequest;
 import app.photos.dtos.PhotoResponse;
 import app.photos.exceptions.PhotoAlreadyExistException;
+import app.photos.exceptions.PhotoNotFoundException;
+import app.photos.mapper.PhotoMapper;
 import app.photos.model.Photo;
 import app.photos.repository.PhotoRepository;
 import app.photos.service.PhotoCommandService;
 import app.photos.service.PhotoCommandServiceImpl;
+import app.users.model.User;
+import app.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +18,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -24,20 +28,34 @@ import static org.mockito.Mockito.when;
 public class PhotoCommandServiceTest {
     @Mock
     PhotoRepository photoRepository;
+    UserRepository userRepository;
     PhotoCommandService photoCommandService;
     @BeforeEach
     void setUp(){
-        photoCommandService=new PhotoCommandServiceImpl(photoRepository);
+        photoCommandService=new PhotoCommandServiceImpl(photoRepository, userRepository);
     }
 
     @Test
     void createPhoto() throws PhotoAlreadyExistException {
-        PhotoCreateRequest photoCreateRequest=new PhotoCreateRequest("123",1L, LocalDateTime.now());
-        PhotoResponse expected= new PhotoResponse(1L,"123",1L,LocalDateTime.now());
-        when(photoRepository.existsPhotoByImgUrl(photoCreateRequest.imgUrl())).thenReturn(false);
-        Photo savedPhoto=new Photo(1L,"123",1L,LocalDateTime.now());
-        when(photoRepository.save(any(Photo.class))).thenReturn(savedPhoto);
+        User user=new User();
+        PhotoCreateRequest photoCreateRequest=new PhotoCreateRequest("123",1L, LocalDateTime.of(2025,12,10,10,10));
+        PhotoResponse expected= new PhotoResponse(1L,"123",1L,LocalDateTime.of(2025,12,10,10,10));
+        when(photoRepository.getPhotoByImgUrl(photoCreateRequest.imgUrl())).thenReturn(Optional.empty());
+        Photo savedPhoto=new Photo(1L,"123",1L,LocalDateTime.of(2025,12,10,10,10),user);
+        when(photoRepository.save(PhotoMapper.toEntity(photoCreateRequest))).thenReturn(savedPhoto);
         PhotoResponse actual=photoCommandService.createPhoto(photoCreateRequest);
         assertEquals(actual,expected);
     }
+
+    @Test
+    void deletePhoto() throws PhotoNotFoundException {
+        User user=new User();
+        String imgUrl="123";
+        Photo photo=new Photo(1L,"123",1L,LocalDateTime.of(2025,12,10,10,10),user);
+        when(photoRepository.getPhotoByImgUrl(imgUrl)).thenReturn(Optional.of(photo));
+        PhotoResponse photoResponse=photoCommandService.deletePhoto(imgUrl);
+        assertEquals(photoResponse,PhotoMapper.toDto(photo));
+    }
+
+
 }

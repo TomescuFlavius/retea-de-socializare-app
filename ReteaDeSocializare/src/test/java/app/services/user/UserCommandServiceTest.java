@@ -31,6 +31,7 @@ public class UserCommandServiceTest {
 
     @Test
     void createUserTest() throws UserAlreadyExistException {
+        User user=new User();
         UserCreateRequest request1=new UserCreateRequest("test","pass","test@gmail.com", LocalDate.now());
         UserResponse expected=new UserResponse(1L,"test","pass","test@gmail.com", LocalDate.now());
         when(userRepository.existsUserByUsername(request1.username())).thenReturn(false);
@@ -42,6 +43,7 @@ public class UserCommandServiceTest {
 
     @Test
     void updateUserTest() throws UserNotFoundException {
+
         User user=new User(1L,"test1","pass1","test1@gmail.com", LocalDate.now());
         UserUpdateRequest request1=new UserUpdateRequest("test", "test@gmail.com","pass");
         when(userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));

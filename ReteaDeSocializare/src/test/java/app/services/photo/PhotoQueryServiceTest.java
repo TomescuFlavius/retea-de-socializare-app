@@ -8,6 +8,7 @@ import app.photos.model.Photo;
 import app.photos.repository.PhotoRepository;
 import app.photos.service.PhotoQueryService;
 import app.photos.service.PhotoQueryServiceImpl;
+import app.users.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +35,9 @@ public class PhotoQueryServiceTest {
 
     @Test
     void getAllPhotos() throws PhotoNotFoundException {
-        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now());
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now());
+        User user=new User();
+        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now(),user);
+        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
         List<Photo> photoList=new ArrayList<>();
         photoList.add(photo);
         photoList.add(photo2);
@@ -47,8 +49,9 @@ public class PhotoQueryServiceTest {
 
     @Test
     void getPhotoById() throws PhotoNotFoundException {
-        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now());
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now());
+        User user=new User();
+        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now(),user);
+        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
         when(photoRepository.findById(1L)).thenReturn(Optional.of(photo));
         PhotoResponse expected = PhotoMapper.toDto(photo);
         PhotoResponse actual=photoQueryService.getPhotoById(1L);
@@ -57,8 +60,9 @@ public class PhotoQueryServiceTest {
 
     @Test
     void getPhotoByImgUrl() throws PhotoNotFoundException {
-        Photo photo=new Photo(1L,"12",1L, LocalDateTime.now());
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now());
+        User user=new User();
+        Photo photo=new Photo(1L,"12",1L, LocalDateTime.now(),user);
+        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
         when(photoRepository.getPhotoByImgUrl("12")).thenReturn(Optional.of(photo));
         PhotoResponse expected = PhotoMapper.toDto(photo);
         PhotoResponse actual=photoQueryService.getPhotoByImgUrl("12");
@@ -67,8 +71,9 @@ public class PhotoQueryServiceTest {
 
     @Test
     void getAllPhotosByUserId() throws PhotoNotFoundException {
-        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now());
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now());
+        User user=new User();
+        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now(),user);
+        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
         List<Photo> photoList=new ArrayList<>();
         photoList.add(photo);
         photoList.add(photo2);
