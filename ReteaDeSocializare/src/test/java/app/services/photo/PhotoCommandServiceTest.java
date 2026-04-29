@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 public class PhotoCommandServiceTest {
     @Mock
     PhotoRepository photoRepository;
+    @Mock
     UserRepository userRepository;
     PhotoCommandService photoCommandService;
     @BeforeEach
@@ -38,11 +40,13 @@ public class PhotoCommandServiceTest {
     @Test
     void createPhoto() throws PhotoAlreadyExistException {
         User user=new User();
+        user.setId(1L);
         PhotoCreateRequest photoCreateRequest=new PhotoCreateRequest("123",1L, LocalDateTime.of(2025,12,10,10,10));
         PhotoResponse expected= new PhotoResponse(1L,"123",1L,LocalDateTime.of(2025,12,10,10,10));
+        when(userRepository.findUserById(photoCreateRequest.userId())).thenReturn(Optional.of(user));
         when(photoRepository.getPhotoByImgUrl(photoCreateRequest.imgUrl())).thenReturn(Optional.empty());
-        Photo savedPhoto=new Photo(1L,"123",1L,LocalDateTime.of(2025,12,10,10,10),user);
-        when(photoRepository.save(PhotoMapper.toEntity(photoCreateRequest))).thenReturn(savedPhoto);
+        Photo savedPhoto=new Photo(1L,"123",LocalDateTime.of(2025,12,10,10,10),user);
+        when(photoRepository.save(any(Photo.class))).thenReturn(savedPhoto);
         PhotoResponse actual=photoCommandService.createPhoto(photoCreateRequest);
         assertEquals(actual,expected);
     }
@@ -50,8 +54,9 @@ public class PhotoCommandServiceTest {
     @Test
     void deletePhoto() throws PhotoNotFoundException {
         User user=new User();
+        user.setId(1L);
         String imgUrl="123";
-        Photo photo=new Photo(1L,"123",1L,LocalDateTime.of(2025,12,10,10,10),user);
+        Photo photo=new Photo(1L,"123",LocalDateTime.of(2025,12,10,10,10),user);
         when(photoRepository.getPhotoByImgUrl(imgUrl)).thenReturn(Optional.of(photo));
         PhotoResponse photoResponse=photoCommandService.deletePhoto(imgUrl);
         assertEquals(photoResponse,PhotoMapper.toDto(photo));

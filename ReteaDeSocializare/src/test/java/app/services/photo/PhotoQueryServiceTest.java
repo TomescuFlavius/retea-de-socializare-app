@@ -36,8 +36,9 @@ public class PhotoQueryServiceTest {
     @Test
     void getAllPhotos() throws PhotoNotFoundException {
         User user=new User();
-        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now(),user);
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
+        user.setId(1L);
+        Photo photo=new Photo(1L,"123",LocalDateTime.now(),user);
+        Photo photo2=new Photo(2L,"123",LocalDateTime.now(),user);
         List<Photo> photoList=new ArrayList<>();
         photoList.add(photo);
         photoList.add(photo2);
@@ -50,8 +51,8 @@ public class PhotoQueryServiceTest {
     @Test
     void getPhotoById() throws PhotoNotFoundException {
         User user=new User();
-        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now(),user);
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
+        user.setId(1L);
+        Photo photo=new Photo(1L,"123",LocalDateTime.now(),user);
         when(photoRepository.findById(1L)).thenReturn(Optional.of(photo));
         PhotoResponse expected = PhotoMapper.toDto(photo);
         PhotoResponse actual=photoQueryService.getPhotoById(1L);
@@ -61,8 +62,8 @@ public class PhotoQueryServiceTest {
     @Test
     void getPhotoByImgUrl() throws PhotoNotFoundException {
         User user=new User();
-        Photo photo=new Photo(1L,"12",1L, LocalDateTime.now(),user);
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
+        user.setId(1L);
+        Photo photo=new Photo(1L,"12",LocalDateTime.now(),user);
         when(photoRepository.getPhotoByImgUrl("12")).thenReturn(Optional.of(photo));
         PhotoResponse expected = PhotoMapper.toDto(photo);
         PhotoResponse actual=photoQueryService.getPhotoByImgUrl("12");
@@ -72,12 +73,13 @@ public class PhotoQueryServiceTest {
     @Test
     void getAllPhotosByUserId() throws PhotoNotFoundException {
         User user=new User();
-        Photo photo=new Photo(1L,"123",1L, LocalDateTime.now(),user);
-        Photo photo2=new Photo(2L,"123",1L, LocalDateTime.now(),user);
+        user.setId(1L);
+        Photo photo=new Photo(1L,"123",LocalDateTime.now(),user);
+        Photo photo2=new Photo(2L,"123",LocalDateTime.now(),user);
         List<Photo> photoList=new ArrayList<>();
         photoList.add(photo);
         photoList.add(photo2);
-        when(photoRepository.getPhotosByUserId(1L)).thenReturn(photoList);
+        when(photoRepository.getPhotosByUser_Id(1L)).thenReturn(photoList);
         PhotoResponseList expected = new PhotoResponseList(PhotoMapper.toDtoList(photoList));
         PhotoResponseList actual=photoQueryService.getAllPhotosByUserId(1L);
         assertEquals(expected, actual);

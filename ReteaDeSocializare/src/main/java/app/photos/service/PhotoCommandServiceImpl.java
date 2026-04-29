@@ -9,6 +9,8 @@ import app.photos.model.Photo;
 import app.photos.repository.PhotoRepository;
 import app.users.model.User;
 import app.users.repository.UserRepository;
+import app.users.exceptions.UserNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,11 +22,13 @@ public class PhotoCommandServiceImpl implements PhotoCommandService {
         this.userRepository = userRepository;
     }
     @Override
+    @Transactional
     public PhotoResponse createPhoto(PhotoCreateRequest photoCreateRequest) throws PhotoAlreadyExistException {
-        User user=userRepository.findUserById(photoCreateRequest.userId()).orElseThrow(PhotoNotFoundException::new);
+        User user=userRepository.findUserById(photoCreateRequest.userId()).orElseThrow(UserNotFoundException::new);
         if(photoRepository.getPhotoByImgUrl(photoCreateRequest.imgUrl()).isPresent()) throw new PhotoAlreadyExistException();
-        Photo savedPhoto = photoRepository.save(PhotoMapper.toEntity(photoCreateRequest));
-        savedPhoto.setUser(user);
+        Photo photo = PhotoMapper.toEntity(photoCreateRequest);
+        user.addPhoto(photo);
+        Photo savedPhoto = photoRepository.save(photo);
         return PhotoMapper.toDto(savedPhoto);
     }
 
@@ -32,7 +36,8 @@ public class PhotoCommandServiceImpl implements PhotoCommandService {
     public PhotoResponse deletePhoto(String imgUrl) throws PhotoNotFoundException {
         if (photoRepository.getPhotoByImgUrl(imgUrl).isEmpty()) throw new PhotoNotFoundException();
         Photo savedPhoto=photoRepository.getPhotoByImgUrl(imgUrl).get();
+        PhotoResponse response = PhotoMapper.toDto(savedPhoto);
         photoRepository.delete(savedPhoto);
-        return PhotoMapper.toDto(savedPhoto);
+        return response;
     }
 }

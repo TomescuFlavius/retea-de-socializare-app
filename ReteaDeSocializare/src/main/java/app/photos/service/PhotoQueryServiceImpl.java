@@ -23,8 +23,8 @@ public class PhotoQueryServiceImpl implements PhotoQueryService {
 
     @Override
     public PhotoResponseList getAllPhotosByUserId(long userId) throws PhotoNotFoundException {
-        if (photoRepository.getPhotosByUserId(userId).isEmpty()) throw new PhotoNotFoundException();
-        return new PhotoResponseList(PhotoMapper.toDtoList(photoRepository.getPhotosByUserId(userId)));
+        if (photoRepository.getPhotosByUser_Id(userId).isEmpty()) throw new PhotoNotFoundException();
+        return new PhotoResponseList(PhotoMapper.toDtoList(photoRepository.getPhotosByUser_Id(userId)));
     }
 
     @Override

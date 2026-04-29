@@ -40,6 +40,9 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Photo> photos=new HashSet<>();
 
     public User(Long id, String username, String password, String email, LocalDate createdAt) {
@@ -48,5 +51,15 @@ public class User {
         this.password = password;
         this.email = email;
         this.createdAt = createdAt;
+    }
+
+    public void addPhoto(Photo photo) {
+        photos.add(photo);
+        photo.setUser(this);
+    }
+
+    public void removePhoto(Photo photo) {
+        photos.remove(photo);
+        photo.setUser(null);
     }
 }

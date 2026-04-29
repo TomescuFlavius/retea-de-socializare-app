@@ -13,7 +13,6 @@ public class PhotoMapper {
         }
         return Photo.builder()
                 .imgUrl(photoCreateRequest.imgUrl())
-                .userId(photoCreateRequest.userId())
                 .createdAt(photoCreateRequest.createdAt())
                 .build();
     }
@@ -21,7 +20,8 @@ public class PhotoMapper {
         if (photo == null) {
             return null;
         }
-        return new PhotoResponse(photo.getId(),  photo.getImgUrl(), photo.getUserId(), photo.getCreatedAt());
+        Long userId = photo.getUser() != null ? photo.getUser().getId() : null;
+        return new PhotoResponse(photo.getId(),  photo.getImgUrl(), userId, photo.getCreatedAt());
     }
 
     public static List<PhotoResponse> toDtoList(List<Photo> photos) {

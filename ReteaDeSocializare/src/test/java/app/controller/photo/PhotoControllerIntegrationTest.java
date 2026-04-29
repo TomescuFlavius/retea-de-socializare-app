@@ -2,6 +2,8 @@ package app.controller.photo;
 
 import app.photos.dtos.PhotoCreateRequest;
 import app.photos.repository.PhotoRepository;
+import app.users.model.User;
+import app.users.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,15 +31,19 @@ public class PhotoControllerIntegrationTest {
     private ObjectMapper objectMapper;
     @Autowired
     private PhotoRepository photoRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void cleanDatabase() {
         photoRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
     void createGetDeleteFlow() throws Exception {
-        PhotoCreateRequest createRequest = new PhotoCreateRequest("ex.jpg", 1L, LocalDateTime.now());
+        User savedUser = userRepository.save(new User(null, "john", "pass", "john@example.com", java.time.LocalDate.now()));
+        PhotoCreateRequest createRequest = new PhotoCreateRequest("ex.jpg", savedUser.getId(), LocalDateTime.now());
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,7 +64,8 @@ public class PhotoControllerIntegrationTest {
 
     @Test
     void duplicateCreateReturnsConflict() throws Exception {
-        PhotoCreateRequest request = new PhotoCreateRequest("duplicate-url.jpg", 1L, LocalDateTime.now());
+        User savedUser = userRepository.save(new User(null, "john2", "pass", "john2@example.com", java.time.LocalDate.now()));
+        PhotoCreateRequest request = new PhotoCreateRequest("duplicate-url.jpg", savedUser.getId(), LocalDateTime.now());
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
