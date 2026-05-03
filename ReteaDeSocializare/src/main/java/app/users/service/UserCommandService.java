@@ -1,5 +1,6 @@
 package app.users.service;
 import app.users.dtos.UserCreateRequest;
+import app.users.dtos.UserCreateResponse;
 import app.users.dtos.UserResponse;
 import app.users.dtos.UserUpdateRequest;
 import app.users.exceptions.UserAlreadyExistException;
@@ -9,4 +10,6 @@ public interface UserCommandService {
     UserResponse createUser(UserCreateRequest userCreateRequest) throws UserAlreadyExistException;
     UserResponse updateUser(String email, UserUpdateRequest userUpdateRequest) throws UserNotFoundException;
     UserResponse deleteUser(String email) throws UserNotFoundException;
+    UserCreateResponse register(UserCreateRequest userCreateRequest);
+    UserCreateResponse login(UserCreateRequest userCreateRequest);
 }

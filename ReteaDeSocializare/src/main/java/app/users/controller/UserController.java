@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest userCreateRequest) throws UserAlreadyExistException {
-        log.info("HTTP POST /api/v1/users/add/ username={}, password={}, createdAt={}", userCreateRequest.username(), userCreateRequest.password(), userCreateRequest.createdAt());
+        log.info("HTTP POST /api/v1/users/add/ username={}, password={}, createdAt={}", userCreateRequest.username(), userCreateRequest.password());
         return ResponseEntity.status(HttpStatus.CREATED).body(userCommandService.createUser(userCreateRequest));
     }
 

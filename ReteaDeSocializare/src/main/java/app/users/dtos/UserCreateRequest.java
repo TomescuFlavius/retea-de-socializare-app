@@ -12,8 +12,6 @@ public record UserCreateRequest(
         String password,
 
         @Email
-        String email,
-
-        @PastOrPresent(message = "Data nu poate fi in viitor")
-        LocalDate createdAt)
+        String email
+)
 {}
