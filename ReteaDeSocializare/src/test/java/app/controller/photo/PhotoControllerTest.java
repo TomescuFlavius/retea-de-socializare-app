@@ -2,6 +2,7 @@ package app.controller.photo;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,7 +46,8 @@ public class PhotoControllerTest {
         when(photoQueryService.getAllPhotos()).thenReturn(responseList);
 
         mockMvc.perform(get("/api/v1/photos/all")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.photoResponseList[0].id").value(1L))
                 .andExpect(jsonPath("$.photoResponseList[1].imgUrl").value("2354"));
@@ -60,7 +62,8 @@ public class PhotoControllerTest {
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
+                        .content(mapper.writeValueAsString(request))
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(10L))
                 .andExpect(jsonPath("$.imgUrl").value("bsdvs"));
@@ -74,7 +77,8 @@ public class PhotoControllerTest {
         when(photoCommandService.deletePhoto(imgUrl)).thenReturn(response);
 
         mockMvc.perform(delete("/api/v1/photos/delete/{imgUrl}", imgUrl)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.imgUrl").value(imgUrl))
                 .andExpect(jsonPath("$.id").value(1L));

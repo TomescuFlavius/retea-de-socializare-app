@@ -13,7 +13,6 @@ public class UserMapper {
                 .username(userCreateRequest.username())
                 .password(userCreateRequest.password())
                 .email(userCreateRequest.email())
-                .createdAt(userCreateRequest.createdAt())
                 .build();
     }
 

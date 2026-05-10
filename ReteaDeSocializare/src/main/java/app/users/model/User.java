@@ -1,12 +1,18 @@
 package app.users.model;
 
 import app.photos.model.Photo;
+import app.security.Permissions;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +23,7 @@ import java.util.Set;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,6 +40,24 @@ public class User {
 
     @PastOrPresent(message = "Data nu poate fi in viitor")
     private LocalDate createdAt;
+
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "permission_groups",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "permission_group", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Set<Permissions> permissionGroups = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return permissionGroups.stream()
+                .map(Permissions::getPermission)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+    }
 
     @OneToMany(
             mappedBy = "user",

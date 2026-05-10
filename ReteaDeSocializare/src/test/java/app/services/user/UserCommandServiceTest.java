@@ -1,4 +1,5 @@
 package app.services.user;
+import app.jwt.JwtTokenProvider;
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserResponse;
 import app.users.dtos.UserUpdateRequest;
@@ -12,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.time.LocalDate;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,16 +27,19 @@ public class UserCommandServiceTest {
     @Mock
     private UserRepository userRepository;
     private UserCommandServiceImpl userCommandServiceImpl;
+    private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
+    private AuthenticationManager authenticationManager;
+
 
     @BeforeEach
     void setup(){
-        userCommandServiceImpl= new UserCommandServiceImpl(userRepository);
+        userCommandServiceImpl= new UserCommandServiceImpl(userRepository, passwordEncoder, jwtTokenProvider, authenticationManager);
     }
 
     @Test
     void createUserTest() throws UserAlreadyExistException {
-        User user=new User();
-        UserCreateRequest request1=new UserCreateRequest("test","pass","test@gmail.com", LocalDate.now());
+        UserCreateRequest request1=new UserCreateRequest("test","pass","test@gmail.com");
         UserResponse expected=new UserResponse(1L,"test","pass","test@gmail.com", LocalDate.now());
         when(userRepository.existsUserByUsername(request1.username())).thenReturn(false);
         User savedUser = new User(1L, "test", "pass", "test@gmail.com", LocalDate.now());

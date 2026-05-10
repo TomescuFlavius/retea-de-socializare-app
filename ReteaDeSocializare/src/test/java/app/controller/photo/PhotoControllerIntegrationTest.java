@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,18 +48,22 @@ public class PhotoControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createRequest)))
+                        .content(objectMapper.writeValueAsString(createRequest))
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.imgUrl").value("ex.jpg"));
 
-        mockMvc.perform(get("/api/v1/photos/all"))
+        mockMvc.perform(get("/api/v1/photos/all")
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.photoResponseList.length()").value(1));
 
-        mockMvc.perform(delete("/api/v1/photos/delete/{imgUrl}", createRequest.imgUrl()))
+        mockMvc.perform(delete("/api/v1/photos/delete/{imgUrl}", createRequest.imgUrl())
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/photos/all"))
+        mockMvc.perform(get("/api/v1/photos/all")
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isNotFound());
     }
 
@@ -69,12 +74,14 @@ public class PhotoControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(jwt().authorities(()->"Photo:Create")))
                 .andExpect(status().isCreated());
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(jwt().authorities(()->"Photo:Create")))
                 .andExpect(status().isConflict());
     }
 
@@ -84,7 +91,8 @@ public class PhotoControllerIntegrationTest {
 
         mockMvc.perform(post("/api/v1/photos/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                        .content(objectMapper.writeValueAsString(invalidRequest))
+                        .with(jwt().authorities(()->"Photo:Read")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -92,7 +100,8 @@ public class PhotoControllerIntegrationTest {
     void deleteNonExistentPhotoReturnsNotFound() throws Exception {
         String nonExistentImgUrl = "nu-exista.jpg";
 
-        mockMvc.perform(delete("/api/v1/photos/delete/{imgUrl}", nonExistentImgUrl))
+        mockMvc.perform(delete("/api/v1/photos/delete/{imgUrl}", nonExistentImgUrl)
+                        .with(jwt().authorities(()->"Photo:Delete")))
                 .andExpect(status().isNotFound());
     }
 }

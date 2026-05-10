@@ -3,6 +3,7 @@ package app.users.auth.controller;
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserCreateResponse;
 import app.users.service.UserCommandService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

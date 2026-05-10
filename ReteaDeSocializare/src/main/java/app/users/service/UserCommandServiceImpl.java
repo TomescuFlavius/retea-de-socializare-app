@@ -1,4 +1,5 @@
 package app.users.service;
+import app.jwt.JwtTokenProvider;
 import app.security.Permissions;
 import app.users.dtos.UserCreateRequest;
 import app.users.dtos.UserCreateResponse;
@@ -10,7 +11,9 @@ import app.users.mapper.UserMapper;
 import app.users.model.User;
 import app.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -18,8 +21,14 @@ import java.util.Set;
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
     private UserRepository userRepository;
-    public UserCommandServiceImpl(UserRepository userRepository) {
+    private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
+    private AuthenticationManager authenticationManager;
+    public UserCommandServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -72,7 +81,7 @@ public class UserCommandServiceImpl implements UserCommandService {
     @Override
     public UserCreateResponse login(UserCreateRequest userCreateRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userCreateRequest.email(), userCreateRequest.password()));
-        if (userRepository.findByEmail(userCreateRequest.email()).isEmpty()) throw new IllegalArgumentException("Email incorrect");
+        if (userRepository.findUserByEmail(userCreateRequest.email()).isEmpty()) throw new IllegalArgumentException("Email incorrect");
         User user = userRepository.findUserByEmail(userCreateRequest.email()).get();
         return new UserCreateResponse(user.getEmail(),jwtTokenProvider.generateToken(user));
     }

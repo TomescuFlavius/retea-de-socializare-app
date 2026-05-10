@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +45,8 @@ public class UserControllerTest {
         userResponseList.add(userResponse2);
         UserResponseList list=new UserResponseList(userResponseList);
         when(userQueryService.findAllUsers()).thenReturn(list);
-        mockMvc.perform(get("/api/v1/users/all").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/users/all").contentType(MediaType.APPLICATION_JSON)
+                        .with(jwt().authorities(()->"User:Read")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userResponseList.length()").value(2)) // Folosește numele exact din Body
                 .andExpect(jsonPath("$.userResponseList[0].id").value(1L));
@@ -53,12 +55,13 @@ public class UserControllerTest {
 
     @Test
     void createUserTest() throws Exception {
-        UserCreateRequest request = new UserCreateRequest("AndreiPopescu", "parola123", "andrei@gmail.com", LocalDate.now());
+        UserCreateRequest request = new UserCreateRequest("AndreiPopescu", "parola123", "andrei@gmail.com");
         UserResponse response = new UserResponse(1L, "AndreiPopescu", "parola123", "andrei@gmail.com", LocalDate.now());
         when(userCommandService.createUser(request)).thenReturn(response);
         mockMvc.perform(post("/api/v1/users/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
+                        .content(mapper.writeValueAsString(request))
+                        .with(jwt().authorities(()->"User:Create")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.username").value("AndreiPopescu"))
@@ -73,7 +76,8 @@ public class UserControllerTest {
         when(userCommandService.updateUser(eq(email), any(UserUpdateRequest.class))).thenReturn(response);
         mockMvc.perform(put("/api/v1/users/update/{email}", email)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(updateRequest)))
+                        .content(mapper.writeValueAsString(updateRequest))
+                        .with(jwt().authorities(()->"User:Update")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("AndreiNou"))
                 .andExpect(jsonPath("$.email").value("andrei_nou@gmail.com"))
@@ -86,7 +90,8 @@ public class UserControllerTest {
         UserResponse response = new UserResponse(1L, "AndreiPopescu", "parola123", email, LocalDate.now());
         when(userCommandService.deleteUser(email)).thenReturn(response);
         mockMvc.perform(delete("/api/v1/users/delete/{email}", email)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(jwt().authorities(()-> "User:Delete")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(email))
                 .andExpect(jsonPath("$.id").value(1L));
