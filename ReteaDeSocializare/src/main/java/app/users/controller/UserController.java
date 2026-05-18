@@ -46,4 +46,5 @@ public class UserController {
         log.info("HTTP DELETE /api/v1/users/delete/{}",email);
         return ResponseEntity.status(HttpStatus.OK).body(userCommandService.deleteUser(email));
     }
+
 }
